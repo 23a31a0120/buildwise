@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BuildWise – Construction Cost Estimation</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+ <header class="app-header">
+
+  <div class="logo-animate">
+    <!-- BuildWise Construction Logo -->
+    <svg width="320" viewBox="0 0 620 180" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- Blueprint frame -->
+      <rect x="20" y="30" width="160" height="120" rx="10"
+            fill="none" stroke="#1e88e5" stroke-width="6"/>
+
+      <!-- Buildings -->
+      <rect x="45" y="70" width="28" height="60" fill="#2E7D32"/>
+      <rect x="85" y="50" width="38" height="80" fill="#1B5E20"/>
+      <rect x="135" y="85" width="22" height="45" fill="#66BB6A"/>
+
+      <!-- Crane -->
+      <line x1="40" y1="60" x2="160" y2="60"
+            stroke="#37474F" stroke-width="4"/>
+      <line x1="110" y1="60" x2="110" y2="38"
+            stroke="#37474F" stroke-width="4"/>
+
+      <!-- Brand text -->
+      <text x="380" y="105"
+            font-size="52"
+            font-weight="700"
+            font-family="Poppins, Arial"
+            text-anchor="middle">
+        <tspan fill="#2E7D32">Build</tspan>
+        <tspan fill="#FB8C00">Wise</tspan>
+      </text>
+
+    </svg>
+  </div>
+
+  <p class="tagline">
+    Smart Construction Planning & Sustainability Platform
+  </p>
+
+</header>
+
+  <!-- KPI -->
+  <div class="kpi-container">
+    <div class="kpi-card"><h3>Total Cost</h3><p id="kpiCost">Rs. 0</p></div>
+    <div class="kpi-card"><h3>Green Rating</h3><p id="kpiRating">--</p></div>
+    <div class="kpi-card"><h3>Carbon Reduction</h3><p id="kpiCarbon">0%</p></div>
+    <div class="kpi-card"><h3>Nearest Supplier</h3><p id="kpiDistance">-- km</p></div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="cards-grid">
+
+    <!-- BUILDING DETAILS -->
+    <div class="card">
+      <h2>Building Details</h2>
+
+      <select id="location" onchange="updateMapByCity(this.value)">
+        <option value="hyderabad">Hyderabad</option>
+        <option value="chennai">Chennai</option>
+        <option value="bangalore">Bangalore</option>
+      </select>
+
+      <div class="warning">
+        <h3>⚠️ Climate Advisory</h3>
+        <p id="climateWarning">Select city to view advisory</p>
+      </div>
+
+      <input type="number" id="length" placeholder="Length (m)">
+      <input type="number" id="width" placeholder="Width (m)">
+      <input type="number" id="floors" placeholder="Floors">
+      <input type="number" id="budget" placeholder="Budget (₹)">
+
+      <button onclick="calculateAll()">Calculate</button>
+      <p id="areaResult"></p>
+    </div>
+
+    <!-- MAP -->
+    <div class="card">
+      <h2>Project Location</h2>
+      <div id="map"></div>
+      <p id="coords">Click map to select location</p>
+      <div class="map-legend">
+  🔵 Project Site &nbsp;&nbsp;
+  🔴 Cement &nbsp;&nbsp;
+  🟢 Steel &nbsp;&nbsp;
+  🟡 Sand
+</div>
+
+    </div>
+
+    <!-- MATERIALS -->
+    <div class="card">
+      <h2>Material Recommendations</h2>
+      <ul id="materialSuggestions"></ul>
+    </div>
+
+    <!-- QUANTITIES -->
+    <div class="card">
+      <h2>Material Quantities</h2>
+      <p id="materialResult"></p>
+    </div>
+
+    <!-- COST -->
+    <div class="card">
+      <h2>Cost Summary</h2>
+      <p id="totalCost"></p>
+      <p id="budgetResult"></p>
+    </div>
+
+    <!-- GREEN OPTIONS -->
+   <div class="card green">
+  <h2>🌱 Green Building Options</h2>
+
+  <div class="green-options">
+    <label><input type="checkbox" id="flyash"> Fly Ash Bricks</label>
+    <label><input type="checkbox" id="aac"> AAC Blocks</label>
+    <label><input type="checkbox" id="solar"> Solar Panels</label>
+    <label><input type="checkbox" id="rainwater"> Rainwater Harvesting</label>
+    <label><input type="checkbox" id="lowvoc"> Low-VOC Paints</label>
+    <label><input type="checkbox" id="recycledsteel"> Recycled Steel</label>
+    <label><input type="checkbox" id="insulation"> Thermal Insulation</label>
+  </div>
+</div>
+
+
+    <!-- CARBON -->
+    <div class="card">
+      <h2>Carbon Footprint</h2>
+      <p id="carbonResult"></p>
+    </div>
+
+    <!-- RATING -->
+    <div class="card rating">
+      <h2>Green Rating</h2>
+      <p id="greenRating"></p>
+    </div>
+
+    <!-- BOQ -->
+    <div class="card">
+      <h2>BOQ</h2>
+      <button onclick="downloadBOQ()">Download BOQ PDF</button>
+    </div>
+
+  </div>
+
+ <footer>
+  <p>
+    BuildWise © 2026 · Civil Engineering Hackathon Project<br>
+    Smart Estimation • Sustainable Planning • Data-Driven Decisions
+  </p>
+</footer>
+
+
+</div>
+
+<script src="script.js"></script>
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmftEoJ2N7gdG3D7EdbCcsWvwLMr-YFwM&callback=initMap"
+  async defer>
+</script>
+</body>
+</html>
+
