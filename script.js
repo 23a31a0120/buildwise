@@ -1,3 +1,22 @@
+// ===== Dynamic Google Maps Loader =====
+(function loadGoogleMaps() {
+
+  const isLocal =
+    location.hostname === "localhost" ||
+    location.hostname === "127.0.0.1";
+
+  const API_KEY = isLocal
+    ? "AIzaSyCmftEoJ2N7gdG3D7EdbCcsWvwLMr-YFwM"
+    : "AIzaSyBNV5lvvpLlFQvdiq--5CR0wUeg7cRk_10";
+
+  const script = document.createElement("script");
+  script.src =
+    `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap`;
+  script.async = true;
+  script.defer = true;
+
+  document.head.appendChild(script);
+})();
 function getRates() {
   let city = document.getElementById("location").value;
 
